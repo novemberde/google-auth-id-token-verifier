@@ -25,8 +25,8 @@ if err == nil {
 
 ## Features
 
-- Fetch public key from www.googleapis.com/oauth2/v3/certs
-- Respect cache-control in response from www.googleapis.com/oauth2/v3/certs
+- Fetch public key from [www.googleapis.com/oauth2/v3/certs](https://www.googleapis.com/oauth2/v3/certs)
+- Respect cache-control in response from [www.googleapis.com/oauth2/v3/certs](https://www.googleapis.com/oauth2/v3/certs)
 - JWT Parser
 - Check Signature 
 - Check IssueTime, ExpirationTime with ClockSkew
