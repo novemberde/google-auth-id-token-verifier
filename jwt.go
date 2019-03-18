@@ -55,39 +55,39 @@ func Decode(token string) (*ClaimSet, error) {
 }
 
 // VerifySignedJWTWithCerts is golang port of OAuth2Client.prototype.verifySignedJwtWithCerts
-func VerifySignedJWTWithCerts(token string, certs *Certs, allowedAuds []string, issuers []string, maxExpiry time.Duration) error {
+func VerifySignedJWTWithCerts(token string, certs *Certs, allowedAuds []string, issuers []string, maxExpiry time.Duration) (*ClaimSet, error) {
 	header, claimSet, err := parseJWT(token)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	key := certs.Keys[header.KeyID]
 	if key == nil {
-		return ErrPublicKeyNotFound
+		return nil, ErrPublicKeyNotFound
 	}
 	err = jws.Verify(token, key)
 	if err != nil {
-		return ErrWrongSignature
+		return nil, ErrWrongSignature
 	}
 	if claimSet.Iat < 1 {
-		return ErrNoIssueTimeInToken
+		return nil, ErrNoIssueTimeInToken
 	}
 	if claimSet.Exp < 1 {
-		return ErrNoExpirationTimeInToken
+		return nil, ErrNoExpirationTimeInToken
 	}
 	now := nowFn()
 	if claimSet.Exp > now.Unix()+int64(maxExpiry.Seconds()) {
-		return ErrExpirationTimeTooFarInFuture
+		return nil, ErrExpirationTimeTooFarInFuture
 	}
 
 	earliest := claimSet.Iat - int64(ClockSkew.Seconds())
 	latest := claimSet.Exp + int64(ClockSkew.Seconds())
 
 	if now.Unix() < earliest {
-		return ErrTokenUsedTooEarly
+		return nil, ErrTokenUsedTooEarly
 	}
 
 	if now.Unix() > latest {
-		return ErrTokenUsedTooLate
+		return nil, ErrTokenUsedTooLate
 	}
 
 	found := false
@@ -98,7 +98,7 @@ func VerifySignedJWTWithCerts(token string, certs *Certs, allowedAuds []string, 
 		}
 	}
 	if !found {
-		return fmt.Errorf("Wrong issuer: %s", claimSet.Iss)
+		return nil, fmt.Errorf("Wrong issuer: %s", claimSet.Iss)
 	}
 
 	audFound := false
@@ -109,8 +109,8 @@ func VerifySignedJWTWithCerts(token string, certs *Certs, allowedAuds []string, 
 		}
 	}
 	if !audFound {
-		return fmt.Errorf("Wrong aud: %s", claimSet.Aud)
+		return nil, fmt.Errorf("Wrong aud: %s", claimSet.Aud)
 	}
 
-	return nil
+	return nil, nil
 }

@@ -18,10 +18,10 @@ var (
 
 type Verifier struct{}
 
-func (v *Verifier) VerifyIDToken(idToken string, audience []string) error {
+func (v *Verifier) VerifyIDToken(idToken string, audience []string) (*ClaimSet, error) {
 	certs, err := getFederatedSignonCerts()
 	if err != nil {
-		return err
+		return nil, err
 	}
 	return VerifySignedJWTWithCerts(idToken, certs, audience, Issuers, MaxTokenLifetime)
 }
