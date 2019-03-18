@@ -4,12 +4,23 @@ Golang port of [OAuth2Client.prototype.verifyIdToken](https://github.com/google/
 
 Verify idtoken without making http request to tokeninfo API.
 
+## Install
+
+```sh
+$ go get github.com/novemberde/google-auth-id-token-verifier
+
+# Dep
+$ dep ensure -add github.com/novemberde/google-auth-id-token-verifier
+
+```
+
+
 ## Usage
 
 ```go
 
 import (
-    "github.com/futurenda/google-auth-id-token-verifier"
+    "github.com/novemberde/google-auth-id-token-verifier"
 )
 
 v := googleAuthIDTokenVerifier.Verifier{}
